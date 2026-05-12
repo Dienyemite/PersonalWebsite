@@ -226,6 +226,36 @@
     <!-- HUD coordinate readout -->
     <div class="hero-hud" aria-hidden="true">x: 0.000<br>y: 0.000<br><span>SM_IDX &bull; 001</span></div>
 
+    <!-- Checkerboard grid canvas (left half, blinking role-spell) -->
+    <canvas id="hero-checker-canvas" aria-hidden="true"></canvas>
+
+    <!-- ASCII peel effect canvas (face hover) -->
+    <canvas id="hero-ascii-canvas" aria-hidden="true"></canvas>
+
+    <!-- Parabolic/decorative graph art SVG overlay -->
+    <svg id="hero-graph-svg" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+      <!-- Parabolic curves -->
+      <path class="hg-curve" d="M-10,380 Q160,80 380,340"/>
+      <path class="hg-curve" d="M20,420 Q200,100 420,360"/>
+      <path class="hg-curve hg-curve--copper" d="M60,460 Q180,160 360,400"/>
+      <!-- Sine wave approximation via bezier -->
+      <path class="hg-sine" d="M0,300 C40,260 60,340 100,300 C140,260 160,340 200,300 C240,260 260,340 300,300 C340,260 360,340 400,300"/>
+      <path class="hg-sine hg-sine--offset" d="M0,340 C40,300 60,380 100,340 C140,300 160,380 200,340 C240,300 260,380 300,340 C340,300 360,380 400,340"/>
+      <!-- Axis cross -->
+      <line class="hg-axis" x1="0" y1="50%" x2="44%" y2="50%"/>
+      <line class="hg-axis" x1="22%" y1="10%" x2="22%" y2="90%"/>
+      <!-- Tick marks -->
+      <line class="hg-tick" x1="11%" y1="48%" x2="11%" y2="52%"/>
+      <line class="hg-tick" x1="22%" y1="48%" x2="22%" y2="52%"/>
+      <line class="hg-tick" x1="33%" y1="48%" x2="33%" y2="52%"/>
+    </svg>
+
+    <!-- Portrait photo -->
+    <div id="hero-portrait-wrap" aria-hidden="false">
+      <img id="hero-portrait-img" src="img/about/Sadman1.jpg" alt="Sadman Mazumder" />
+      <div id="hero-portrait-glow"></div>
+    </div>
+
     <!-- Name top-left -->
     <div class="hero-text">
       <h1 class="hero-name">Sadman<br>Mazumder</h1>
@@ -716,6 +746,253 @@
   })();
 
   /* ---- Three.js: Blueprint Wireframe Fragments ---- */
+  /* ================================================================
+     HERO FEATURE 1 — CHECKERBOARD ROLE-SPELL (left half, yellow glow)
+     ================================================================ */
+  (function () {
+    var cvs = document.getElementById('hero-checker-canvas');
+    if (!cvs) return;
+    var ctx = cvs.getContext('2d');
+    var CELL = 22, GAP = 2, STEP = 24;
+
+    var FONT5X7 = {
+      'A':[[0,1,1,1,0],[1,0,0,0,1],[1,0,0,0,1],[1,1,1,1,1],[1,0,0,0,1],[1,0,0,0,1],[1,0,0,0,1]],
+      'B':[[1,1,1,1,0],[1,0,0,0,1],[1,0,0,0,1],[1,1,1,1,0],[1,0,0,0,1],[1,0,0,0,1],[1,1,1,1,0]],
+      'C':[[0,1,1,1,1],[1,0,0,0,0],[1,0,0,0,0],[1,0,0,0,0],[1,0,0,0,0],[1,0,0,0,0],[0,1,1,1,1]],
+      'D':[[1,1,1,1,0],[1,0,0,0,1],[1,0,0,0,1],[1,0,0,0,1],[1,0,0,0,1],[1,0,0,0,1],[1,1,1,1,0]],
+      'E':[[1,1,1,1,1],[1,0,0,0,0],[1,0,0,0,0],[1,1,1,1,0],[1,0,0,0,0],[1,0,0,0,0],[1,1,1,1,1]],
+      'F':[[1,1,1,1,1],[1,0,0,0,0],[1,0,0,0,0],[1,1,1,1,0],[1,0,0,0,0],[1,0,0,0,0],[1,0,0,0,0]],
+      'G':[[0,1,1,1,1],[1,0,0,0,0],[1,0,0,0,0],[1,0,0,1,1],[1,0,0,0,1],[1,0,0,0,1],[0,1,1,1,1]],
+      'I':[[1,1,1,1,1],[0,0,1,0,0],[0,0,1,0,0],[0,0,1,0,0],[0,0,1,0,0],[0,0,1,0,0],[1,1,1,1,1]],
+      'L':[[1,0,0,0,0],[1,0,0,0,0],[1,0,0,0,0],[1,0,0,0,0],[1,0,0,0,0],[1,0,0,0,0],[1,1,1,1,1]],
+      'M':[[1,0,0,0,1],[1,1,0,1,1],[1,0,1,0,1],[1,0,0,0,1],[1,0,0,0,1],[1,0,0,0,1],[1,0,0,0,1]],
+      'N':[[1,0,0,0,1],[1,1,0,0,1],[1,0,1,0,1],[1,0,0,1,1],[1,0,0,0,1],[1,0,0,0,1],[1,0,0,0,1]],
+      'O':[[0,1,1,1,0],[1,0,0,0,1],[1,0,0,0,1],[1,0,0,0,1],[1,0,0,0,1],[1,0,0,0,1],[0,1,1,1,0]],
+      'P':[[1,1,1,1,0],[1,0,0,0,1],[1,0,0,0,1],[1,1,1,1,0],[1,0,0,0,0],[1,0,0,0,0],[1,0,0,0,0]],
+      'R':[[1,1,1,1,0],[1,0,0,0,1],[1,0,0,0,1],[1,1,1,1,0],[1,0,1,0,0],[1,0,0,1,0],[1,0,0,0,1]],
+      'S':[[0,1,1,1,1],[1,0,0,0,0],[1,0,0,0,0],[0,1,1,1,0],[0,0,0,0,1],[0,0,0,0,1],[1,1,1,1,0]],
+      'T':[[1,1,1,1,1],[0,0,1,0,0],[0,0,1,0,0],[0,0,1,0,0],[0,0,1,0,0],[0,0,1,0,0],[0,0,1,0,0]],
+      'V':[[1,0,0,0,1],[1,0,0,0,1],[1,0,0,0,1],[1,0,0,0,1],[1,0,0,0,1],[0,1,0,1,0],[0,0,1,0,0]],
+      'W':[[1,0,0,0,1],[1,0,0,0,1],[1,0,0,0,1],[1,0,1,0,1],[1,0,1,0,1],[1,1,0,1,1],[1,0,0,0,1]],
+      ' ':[[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0]],
+    };
+
+    var SEQUENCES = [['SOFTWARE','DEVELOPER'],['AI','ENGINEER'],['GAME','DEVELOPER']];
+    var phase = 0, subPhase = 0, phaseTimer = 0;
+    var PHASE_HOLD = 200, PHASE_TRANS = 50;
+    var cols, rows, cellStates, targetStates, noiseLevels;
+
+    function wordToCells(word, rowOffset, colOffset) {
+      var cells = [], col = colOffset;
+      for (var wi = 0; wi < word.length; wi++) {
+        var glyph = FONT5X7[word[wi]] || FONT5X7[' '];
+        for (var row = 0; row < 7; row++)
+          for (var bit = 0; bit < 5; bit++)
+            if (glyph[row][bit]) cells.push({ r: rowOffset + row, c: col + bit });
+        col += 6;
+      }
+      return cells;
+    }
+
+    function buildTarget() {
+      targetStates.fill(0);
+      var seq = SEQUENCES[phase % SEQUENCES.length];
+      var word = seq[subPhase % seq.length];
+      var startRow = Math.max(1, Math.floor((rows - 7) / 2));
+      var startCol = 2;
+      wordToCells(word, startRow, startCol).forEach(function (cell) {
+        var idx = cell.r * cols + cell.c;
+        if (idx >= 0 && idx < targetStates.length) targetStates[idx] = 1.0;
+      });
+    }
+
+    function resize() {
+      cvs.width  = cvs.offsetWidth  * (window.devicePixelRatio || 1);
+      cvs.height = cvs.offsetHeight * (window.devicePixelRatio || 1);
+      ctx.scale(window.devicePixelRatio || 1, window.devicePixelRatio || 1);
+      cols = Math.floor(cvs.offsetWidth  / STEP) + 1;
+      rows = Math.floor(cvs.offsetHeight / STEP) + 1;
+      cellStates   = new Float32Array(cols * rows);
+      targetStates = new Float32Array(cols * rows);
+      noiseLevels  = new Float32Array(cols * rows);
+      for (var i = 0; i < noiseLevels.length; i++) noiseLevels[i] = Math.random() * 0.08;
+      buildTarget();
+    }
+
+    function tick() {
+      phaseTimer++;
+      if (phaseTimer > PHASE_HOLD + PHASE_TRANS) {
+        phaseTimer = 0;
+        var seq = SEQUENCES[phase % SEQUENCES.length];
+        subPhase++;
+        if (subPhase >= seq.length) { subPhase = 0; phase++; }
+        buildTarget();
+      }
+      var now = Date.now();
+      for (var i = 0; i < cellStates.length; i++) {
+        if (targetStates[i] === 0) {
+          if (Math.random() < 0.004) noiseLevels[i] = 0.05 + Math.random() * 0.22;
+          else noiseLevels[i] *= 0.90;
+          cellStates[i] = noiseLevels[i];
+        } else {
+          cellStates[i] += (1.0 - cellStates[i]) * 0.14;
+          var pulse = 0.72 + 0.28 * (0.5 + 0.5 * Math.sin(now * 0.004 + i * 0.37));
+          cellStates[i] = Math.max(0.6, cellStates[i]) * pulse;
+        }
+      }
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, cvs.offsetWidth, cvs.offsetHeight);
+      var now = Date.now();
+      for (var r = 0; r < rows; r++) {
+        for (var c = 0; c < cols; c++) {
+          var val = cellStates[r * cols + c];
+          if (val < 0.015) continue;
+          var x = c * STEP, y = r * STEP;
+          // Outline
+          ctx.save();
+          ctx.globalAlpha = val * 0.5;
+          ctx.strokeStyle = 'rgba(240,210,50,' + (0.4 + val * 0.6) + ')';
+          ctx.lineWidth = 0.9;
+          ctx.strokeRect(x + 1, y + 1, CELL - 2, CELL - 2);
+          ctx.restore();
+          // Fill glow
+          if (val > 0.25) {
+            ctx.save();
+            ctx.globalAlpha = (val - 0.25) * 1.2;
+            var grd = ctx.createRadialGradient(x+CELL/2,y+CELL/2,0,x+CELL/2,y+CELL/2,CELL*0.75);
+            grd.addColorStop(0, 'rgba(255,248,90,0.88)');
+            grd.addColorStop(0.5,'rgba(230,200,50,0.38)');
+            grd.addColorStop(1,  'rgba(180,140,0,0)');
+            ctx.fillStyle = grd;
+            ctx.fillRect(x+2,y+2,CELL-4,CELL-4);
+            ctx.restore();
+          }
+          // Bloom halo
+          if (val > 0.6) {
+            ctx.save();
+            ctx.globalAlpha = (val - 0.6) * 0.55;
+            var bloom = ctx.createRadialGradient(x+CELL/2,y+CELL/2,0,x+CELL/2,y+CELL/2,CELL*1.5);
+            bloom.addColorStop(0,'rgba(255,255,140,0.55)');
+            bloom.addColorStop(1,'rgba(255,220,0,0)');
+            ctx.fillStyle = bloom;
+            ctx.beginPath();
+            ctx.arc(x+CELL/2,y+CELL/2,CELL*1.2,0,Math.PI*2);
+            ctx.fill();
+            ctx.restore();
+          }
+        }
+      }
+    }
+
+    function loop() { requestAnimationFrame(loop); tick(); draw(); }
+    resize();
+    window.addEventListener('resize', function() { resize(); });
+    loop();
+  })();
+
+
+  /* ================================================================
+     HERO FEATURE 2 — ASCII PEEL EFFECT
+     ================================================================ */
+  (function () {
+    var cvs = document.getElementById('hero-ascii-canvas');
+    if (!cvs) return;
+    var ctx = cvs.getContext('2d');
+    var ASCII = ' .\'`:;Il!i<~+_?][|/tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$';
+    var FONT_SIZE = 10, CELL_W = 7, CELL_H = 10;
+    var RADIUS = 120, FADE = 55;
+    var mx = -9999, my = -9999, t = 0;
+
+    function resize() {
+      cvs.width  = cvs.offsetWidth;
+      cvs.height = cvs.offsetHeight;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+
+    document.addEventListener('mousemove', function (e) {
+      var r = cvs.getBoundingClientRect();
+      mx = e.clientX - r.left;
+      my = e.clientY - r.top;
+    });
+
+    function draw() {
+      requestAnimationFrame(draw);
+      t += 0.04;
+      ctx.clearRect(0, 0, cvs.width, cvs.height);
+      if (mx < -500) return;
+
+      var cols = Math.ceil(cvs.width  / CELL_W);
+      var rows = Math.ceil(cvs.height / CELL_H);
+      ctx.font = FONT_SIZE + 'px "Courier New",monospace';
+      ctx.textBaseline = 'top';
+
+      for (var r = 0; r < rows; r++) {
+        for (var c = 0; c < cols; c++) {
+          var cx = c * CELL_W + CELL_W/2, cy = r * CELL_H + CELL_H/2;
+          var dist = Math.sqrt((cx-mx)*(cx-mx)+(cy-my)*(cy-my));
+          if (dist > RADIUS + FADE) continue;
+          var strength = Math.max(0, 1 - Math.max(0, dist-RADIUS)/FADE);
+          if (strength < 0.01) continue;
+          var nv = (Math.sin(cx*0.13+t)*Math.cos(cy*0.09-t*0.7)+1)/2;
+          nv += (Math.sin(cx*0.22-t*1.3)+1)*0.15;
+          nv = Math.min(1, (nv + strength*0.4)/1.4);
+          var ci = Math.max(0,Math.min(ASCII.length-1,Math.floor(nv*(ASCII.length-1))));
+          var depthT = Math.min(1, dist/RADIUS);
+          var colR = Math.round(176*(1-depthT)+184*depthT);
+          var colG = Math.round(200*(1-depthT)+106*depthT);
+          var colB = Math.round(212*(1-depthT)+46*depthT);
+          ctx.fillStyle = 'rgba('+colR+','+colG+','+colB+','+(strength*0.82)+')';
+          ctx.fillText(ASCII[ci], c*CELL_W, r*CELL_H);
+        }
+      }
+
+      // Sine wave lines inside peel zone
+      for (var wi = 0; wi < 5; wi++) {
+        var waveY = my - RADIUS*0.55 + (wi/4)*RADIUS*1.1;
+        var freq = 0.04 + wi*0.013, amp = 7+wi*3, wphase = t*1.2+wi*1.1;
+        ctx.beginPath();
+        ctx.strokeStyle = wi%2===0
+          ? 'rgba(176,200,212,'+(0.28*(5-wi)/5)+')'
+          : 'rgba(184,106,46,'+(0.20*(5-wi)/5)+')';
+        ctx.lineWidth = 0.7;
+        var started = false;
+        for (var px = mx-RADIUS-FADE; px <= mx+RADIUS+FADE; px+=2) {
+          var str2 = Math.max(0,1-Math.max(0,Math.abs(px-mx)-RADIUS)/FADE);
+          if (str2 < 0.02) continue;
+          var py = waveY + Math.sin(px*freq+wphase)*amp*str2;
+          if (!started) { ctx.moveTo(px,py); started=true; } else ctx.lineTo(px,py);
+        }
+        ctx.stroke();
+      }
+
+      // Peel edge arc
+      ctx.beginPath();
+      ctx.arc(mx,my,RADIUS,0,Math.PI*2);
+      ctx.strokeStyle = 'rgba(184,106,46,0.38)';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([4,6]);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // HUD tick marks on peel ring
+      for (var ti = 0; ti < 8; ti++) {
+        var angle = (ti/8)*Math.PI*2 + t*0.28;
+        ctx.beginPath();
+        ctx.moveTo(mx+Math.cos(angle)*(RADIUS-5), my+Math.sin(angle)*(RADIUS-5));
+        ctx.lineTo(mx+Math.cos(angle)*(RADIUS+4), my+Math.sin(angle)*(RADIUS+4));
+        ctx.strokeStyle = 'rgba(184,106,46,0.6)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+      }
+    }
+    draw();
+  })();
+
+
+  /* ---- Three.js: Blueprint Wireframe Fragments ---- */
   (function () {
     if (typeof THREE === 'undefined') return;
     var hero = document.getElementById('gallery-hero');
@@ -728,10 +1005,10 @@
     renderer.setSize(W, H);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.setClearColor(0x000000, 0);
-    var cvs = renderer.domElement;
-    cvs.id = 'hero-three-canvas';
-    cvs.setAttribute('aria-hidden', 'true');
-    hero.insertBefore(cvs, hero.firstChild);
+    var cvs3 = renderer.domElement;
+    cvs3.id = 'hero-three-canvas';
+    cvs3.setAttribute('aria-hidden', 'true');
+    hero.insertBefore(cvs3, hero.firstChild);
     var teal = new THREE.Color(0x1a3a4a);
     var copper = new THREE.Color(0xb86a2e);
     var defs = [
@@ -754,8 +1031,8 @@
       scene.add(seg);
       return { m: seg, rx: (rnd()-0.5)*0.004, ry: (rnd()-0.5)*0.004, rz: (rnd()-0.5)*0.002 };
     });
-    var mx = 0, my = 0;
-    document.addEventListener('mousemove', function (e) { mx=(e.clientX/window.innerWidth-0.5)*2; my=(e.clientY/window.innerHeight-0.5)*2; });
+    var tmx = 0, tmy = 0;
+    document.addEventListener('mousemove', function (e) { tmx=(e.clientX/window.innerWidth-0.5)*2; tmy=(e.clientY/window.innerHeight-0.5)*2; });
     var heroVisible = true;
     new IntersectionObserver(function(en){ heroVisible=en[0].isIntersecting; }).observe(hero);
     window.addEventListener('resize', function () { W=hero.offsetWidth; H=hero.offsetHeight; camera.aspect=W/H; camera.updateProjectionMatrix(); renderer.setSize(W,H); });
@@ -763,8 +1040,8 @@
       requestAnimationFrame(loop);
       if (!heroVisible) return;
       frags.forEach(function(f){ f.m.rotation.x+=f.rx; f.m.rotation.y+=f.ry; f.m.rotation.z+=f.rz; });
-      camera.position.x += (mx*0.6 - camera.position.x)*0.025;
-      camera.position.y += (-my*0.4 - camera.position.y)*0.025;
+      camera.position.x += (tmx*0.6 - camera.position.x)*0.025;
+      camera.position.y += (-tmy*0.4 - camera.position.y)*0.025;
       camera.lookAt(0,0,0);
       renderer.render(scene,camera);
     })();

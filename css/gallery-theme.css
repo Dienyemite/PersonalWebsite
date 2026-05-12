@@ -1087,18 +1087,30 @@ img {
 }
 
 /* ============================================================ */
-/* SHAPLA DIVERGENCE — Fusion Theme Additions                   */
+/* SHAPLA DIVERGENCE — Full Fusion Theme                        */
+/* Minimalist Water Lily × Steins;Gate HUD Aesthetic            */
 /* ============================================================ */
+
+/* ── New Tokens ─────────────────────────────────────────────── */
 :root {
-    --gallery-copper:    #b86a2e;
-    --gallery-deep-teal: #1a3a4a;
-    --gallery-warm-sand: #e8e0d4;
+    --gallery-copper:       #b86a2e;
+    --gallery-copper-light: #d4894a;
+    --gallery-deep-teal:    #1a3a4a;
+    --gallery-deeper-teal:  #0d2232;
+    --gallery-darkest:      #07111a;
+    --gallery-warm-sand:    #e8e0d4;
 }
+
+/* ── Scroll Progress Bar ─────────────────────────────────────── */
 #scroll-progress {
     position: fixed; top: 0; left: 0; height: 2px; width: 0%;
-    background: var(--gallery-copper); z-index: 9999; pointer-events: none;
+    background: linear-gradient(to right, var(--gallery-copper), var(--gallery-copper-light));
+    z-index: 9999; pointer-events: none;
     transition: width 0.06s linear;
+    box-shadow: 0 0 8px rgba(184,106,46,0.55);
 }
+
+/* ── Custom Cursor Ring ──────────────────────────────────────── */
 .cursor-ring {
     position: fixed; width: 28px; height: 28px;
     border: 1.5px solid var(--gallery-copper); border-radius: 50%;
@@ -1106,40 +1118,96 @@ img {
     opacity: 0; transition: opacity 0.4s ease, width 0.2s ease, height 0.2s ease;
     will-change: left, top;
 }
+
+/* ── Three.js Canvas ─────────────────────────────────────────── */
 #hero-three-canvas {
     position: absolute !important; top: 0 !important; left: 0 !important;
     width: 100% !important; height: 100% !important;
     pointer-events: none !important; z-index: 0 !important;
 }
+
+/* ── Hero Blueprint Grid — more visible ──────────────────────── */
 .hero-blueprint {
     position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-    pointer-events: none; z-index: 0; opacity: 0.055;
+    pointer-events: none; z-index: 1; opacity: 0.14;
 }
+
+/* ── Hero Concentric Rings — prominent ───────────────────────── */
 .hero-rings {
-    position: absolute; right: 5%; top: 50%;
-    width: 55vmin; height: 55vmin; pointer-events: none; z-index: 0; opacity: 0.10;
+    position: absolute; right: 4%; top: 50%;
+    width: 60vmin; height: 60vmin; pointer-events: none; z-index: 1; opacity: 0.28;
     animation: rings-slow-spin 70s linear infinite;
 }
 @keyframes rings-slow-spin {
     from { transform: translateY(-50%) rotate(0deg);   }
     to   { transform: translateY(-50%) rotate(360deg); }
 }
-.hero-pixel-corner { position: absolute; pointer-events: none; z-index: 0; opacity: 0.09; }
+
+/* ── Pixel Corner Accents — visible ──────────────────────────── */
+.hero-pixel-corner {
+    position: absolute; pointer-events: none; z-index: 2; opacity: 0.28;
+    width: 128px; height: 108px;
+}
 .hero-pixel-corner--tl { top: 0; left: 0; }
 .hero-pixel-corner--br { bottom: 0; right: 0; transform: rotate(180deg); }
+
+/* ── Hero HUD Readout — legible ──────────────────────────────── */
 .hero-hud {
     position: absolute; bottom: 80px; right: 48px;
-    font-family: 'Courier New', Courier, monospace; font-size: 9px;
-    letter-spacing: 0.12em; color: rgba(255,255,255,0.28); pointer-events: none;
-    z-index: 3; line-height: 2; text-align: right; user-select: none;
+    font-family: 'Courier New', Courier, monospace; font-size: 10px;
+    letter-spacing: 0.14em; color: rgba(255,255,255,0.52); pointer-events: none;
+    z-index: 3; line-height: 2.2; text-align: right; user-select: none;
+    padding-right: 14px; border-right: 1px solid rgba(184,106,46,0.45);
 }
-.hero-hud span { color: var(--gallery-copper); opacity: 0.75; }
+.hero-hud span { color: var(--gallery-copper); opacity: 1; }
+
+/* ── Hero corner bracket overlays ───────────────────────────── */
+#gallery-hero::before {
+    content: '';
+    position: absolute; top: 70px; left: 44px;
+    width: 22px; height: 22px;
+    border-top: 1px solid var(--gallery-copper);
+    border-left: 1px solid var(--gallery-copper);
+    z-index: 3; pointer-events: none; opacity: 0.6;
+}
+#gallery-hero::after {
+    content: '';
+    position: absolute; bottom: 24px; right: 44px;
+    width: 22px; height: 22px;
+    border-bottom: 1px solid var(--gallery-copper);
+    border-right: 1px solid var(--gallery-copper);
+    z-index: 3; pointer-events: none; opacity: 0.6;
+}
+
+/* ── Hero name teal glow ─────────────────────────────────────── */
+.hero-name {
+    text-shadow: 0 0 40px rgba(26,58,74,0.45), 0 2px 10px rgba(0,0,0,0.35) !important;
+}
+
+/* ── Section Label HUD ───────────────────────────────────────── */
 .section-label-hud {
     font-family: 'Courier New', Courier, monospace !important;
-    font-size: 9px !important; font-weight: 400 !important;
-    letter-spacing: 0.22em !important; text-transform: uppercase;
+    font-size: 10px !important; font-weight: 400 !important;
+    letter-spacing: 0.26em !important; text-transform: uppercase;
     color: var(--gallery-copper) !important; display: block; margin-bottom: 20px;
+    padding-left: 18px; position: relative;
 }
+.section-label-hud::before {
+    content: '';
+    position: absolute; left: 0; top: 50%; width: 10px; height: 1px;
+    background: var(--gallery-copper);
+}
+
+/* ── Section title copper underline ──────────────────────────── */
+.section-title { position: relative; }
+.section-title::after {
+    content: '';
+    display: block; width: 36px; height: 1px;
+    background: var(--gallery-copper);
+    margin-top: 18px; opacity: 0.65;
+}
+
+/* ── Reveal Animations ───────────────────────────────────────── */
 .reveal { opacity: 0; transform: translateY(22px); transition: opacity 0.75s ease, transform 0.75s ease; }
 .reveal.visible { opacity: 1; transform: translateY(0); }
 .reveal-d1 { transition-delay: 0.10s; }
@@ -1148,21 +1216,16 @@ img {
 .reveal-d4 { transition-delay: 0.40s; }
 .reveal-d5 { transition-delay: 0.50s; }
 .reveal-d6 { transition-delay: 0.60s; }
-.projects-grid { perspective: 1200px; }
-.project-card { transform-style: preserve-3d; will-change: transform; }
-.project-card::after {
-    content: ''; position: absolute; inset: 0;
-    background: var(--gallery-deep-teal); opacity: 0;
-    mix-blend-mode: multiply; transition: opacity 0.35s ease, transform 0.35s ease;
-    transform: translate(0, 0); pointer-events: none; z-index: 0;
+
+/* ── NAV — copper identity ───────────────────────────────────── */
+.nav-name { color: var(--gallery-copper) !important; }
+#gallery-nav.scrolled {
+    background: rgba(7,17,26,0.97) !important;
+    border-bottom-color: rgba(184,106,46,0.3) !important;
 }
-.project-card:hover::after { opacity: 0.22; transform: translate(5px, 5px); }
-.project-card-overlay { z-index: 1; }
-.gallery-btn:hover {
-    background: var(--gallery-copper) !important;
-    border-color: var(--gallery-copper) !important;
-    color: var(--gallery-white) !important;
-}
+#gallery-nav.scrolled .nav-name  { color: var(--gallery-copper) !important; }
+#gallery-nav.scrolled .nav-links a { color: rgba(255,255,255,0.65) !important; }
+#gallery-nav.scrolled .nav-links a:hover { color: var(--gallery-copper) !important; }
 .nav-links li a { position: relative; }
 .nav-links li a::after {
     content: ''; position: absolute; bottom: -3px; left: 0;
@@ -1170,24 +1233,336 @@ img {
 }
 .nav-links li a:hover::after { width: 100%; }
 .nav-links li a:hover { color: var(--gallery-copper) !important; opacity: 1; }
-.projects-summary-skills li { border-left-color: var(--gallery-copper) !important; }
-.repo-card:hover { border-color: var(--gallery-copper) !important; }
-#gallery-art-teaser { background: var(--gallery-warm-sand) !important; }
+
+/* ── ABOUT SECTION ───────────────────────────────────────────── */
+#gallery-about {
+    border-top: 1px solid rgba(184,106,46,0.35) !important;
+    position: relative !important;
+}
+#gallery-about::before {
+    content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 0;
+    opacity: 0.05;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cdefs%3E%3Cpattern id='abp' width='40' height='40' patternUnits='userSpaceOnUse'%3E%3Cpath d='M40 0L0 0 0 40' fill='none' stroke='%231a3a4a' stroke-width='0.5'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='160' height='160' fill='url(%23abp)'/%3E%3Cpath d='M160 0L0 0 0 160' fill='none' stroke='%231a3a4a' stroke-width='1'/%3E%3C/svg%3E");
+    background-size: 160px 160px;
+}
+
+/* About photo: copper offset frame */
+.about-image-wrap::before {
+    content: '';
+    position: absolute; top: 14px; left: 14px; right: -14px; bottom: -14px;
+    border: 1px solid var(--gallery-copper);
+    opacity: 0.38; z-index: 0; pointer-events: none;
+    transition: opacity 0.4s ease;
+}
+.about-image-wrap:hover::before { opacity: 0.72; }
+
+/* Film grain on about photo */
 .about-image-wrap::after {
-    content: ''; position: absolute; inset: 0; pointer-events: none; opacity: 0.045;
+    content: ''; position: absolute; inset: 0; pointer-events: none; opacity: 0.055; z-index: 1;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23g)'/%3E%3C/svg%3E");
     background-size: 200px 200px;
 }
+
+/* About role — copper left marker */
+.about-role {
+    border-left: 2px solid var(--gallery-copper) !important;
+    padding-left: 12px !important;
+}
+
+/* ── PROJECTS SECTION — deep teal dark ──────────────────────── */
+#gallery-projects {
+    background: var(--gallery-deeper-teal) !important;
+    border-top: 1px solid rgba(184,106,46,0.4) !important;
+    position: relative;
+}
+/* Blueprint grid on projects */
+#gallery-projects::before {
+    content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 0;
+    opacity: 0.07;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cdefs%3E%3Cpattern id='pbp' width='40' height='40' patternUnits='userSpaceOnUse'%3E%3Cpath d='M40 0L0 0 0 40' fill='none' stroke='%23b0c8d4' stroke-width='0.5'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='160' height='160' fill='url(%23pbp)'/%3E%3Cpath d='M160 0L0 0 0 160' fill='none' stroke='%23b0c8d4' stroke-width='1'/%3E%3C/svg%3E");
+    background-size: 160px 160px;
+}
+/* Scanlines on projects */
+#gallery-projects::after {
+    content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.055) 3px, rgba(0,0,0,0.055) 4px);
+}
+/* Text on dark projects bg */
+#gallery-projects .section-title        { color: #ffffff !important; }
+#gallery-projects .projects-summary-bio { color: rgba(255,255,255,0.58) !important; }
+#gallery-projects .projects-summary     { border-top-color: rgba(184,106,46,0.3) !important; }
+#gallery-projects .projects-summary-skills li {
+    color: rgba(255,255,255,0.52) !important;
+    border-left-color: var(--gallery-copper) !important;
+}
+#gallery-projects .repos-all-link       { color: rgba(255,255,255,0.45) !important; }
+#gallery-projects .repos-all-link:hover { color: var(--gallery-copper) !important; opacity: 1; }
+/* Repo cards on dark bg */
+.repo-card {
+    background: rgba(255,255,255,0.04) !important;
+    border-color: rgba(176,200,212,0.18) !important;
+}
+.repo-card:hover {
+    border-color: var(--gallery-copper) !important;
+    background: rgba(184,106,46,0.07) !important;
+    box-shadow: none !important;
+}
+.repo-card-name { color: rgba(255,255,255,0.82) !important; }
+.repo-card-lang { color: var(--gallery-copper) !important; }
+/* 3D card tilt */
+.projects-grid { perspective: 1200px; }
+.project-card  { transform-style: preserve-3d; will-change: transform; }
+/* Copper+teal gradient top bar */
+.project-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(to right, var(--gallery-copper), var(--gallery-deep-teal));
+    z-index: 2; opacity: 0; transition: opacity 0.3s ease;
+}
+.project-card:hover::before { opacity: 1; }
+/* Divergence ghost */
+.project-card::after {
+    content: ''; position: absolute; inset: 0;
+    background: var(--gallery-deep-teal); opacity: 0;
+    mix-blend-mode: multiply; transition: opacity 0.35s ease, transform 0.35s ease;
+    transform: translate(0, 0); pointer-events: none; z-index: 0;
+}
+.project-card:hover::after  { opacity: 0.22; transform: translate(5px,5px); }
+.project-card-overlay       { z-index: 1; }
+.project-card-tag           { color: var(--gallery-copper) !important; }
+/* Buttons on dark projects section */
+#gallery-projects .gallery-btn,
+#gallery-projects .gallery-btn-ghost {
+    border-color: rgba(176,200,212,0.35) !important;
+    color: rgba(255,255,255,0.65) !important;
+}
+#gallery-projects .gallery-btn:hover,
+#gallery-projects .gallery-btn-ghost:hover {
+    background: var(--gallery-copper) !important;
+    border-color: var(--gallery-copper) !important;
+    color: #fff !important;
+}
+.projects-summary-skills li { border-left-color: var(--gallery-copper) !important; }
+
+/* ── ART TEASER — warm sand + blueprint overlay ──────────────── */
+#gallery-art-teaser {
+    background: var(--gallery-warm-sand) !important;
+    border-top: 1px solid rgba(184,106,46,0.35) !important;
+    position: relative;
+}
+#gallery-art-teaser::before {
+    content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 0;
+    opacity: 0.06;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cdefs%3E%3Cpattern id='atbp' width='40' height='40' patternUnits='userSpaceOnUse'%3E%3Cpath d='M40 0L0 0 0 40' fill='none' stroke='%231a3a4a' stroke-width='0.5'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='160' height='160' fill='url(%23atbp)'/%3E%3Cpath d='M160 0L0 0 0 160' fill='none' stroke='%231a3a4a' stroke-width='1'/%3E%3C/svg%3E");
+    background-size: 160px 160px;
+}
+/* HUD label + copper frame on art teaser image */
+.art-teaser-visual { position: relative; }
+.art-teaser-visual::before {
+    content: 'ART \B7 GALLERY';
+    position: absolute; top: -22px; left: 0; z-index: 3; pointer-events: none;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 9px; letter-spacing: 0.24em; color: var(--gallery-copper);
+}
+.art-teaser-visual::after {
+    content: ''; position: absolute; inset: 10px;
+    border: 1px solid rgba(184,106,46,0.4); pointer-events: none; z-index: 3;
+    transition: border-color 0.4s ease;
+}
+.art-teaser-visual:hover::after { border-color: rgba(184,106,46,0.8); }
+
+/* ── CONTACT SECTION — near-black ───────────────────────────── */
+#gallery-contact {
+    background: var(--gallery-darkest) !important;
+    border-top: 1px solid rgba(184,106,46,0.4) !important;
+    position: relative;
+}
+#gallery-contact::before {
+    content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 0;
+    opacity: 0.055;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cdefs%3E%3Cpattern id='cbp' width='40' height='40' patternUnits='userSpaceOnUse'%3E%3Cpath d='M40 0L0 0 0 40' fill='none' stroke='%23b0c8d4' stroke-width='0.5'/%3E%3C/pattern%3E%3C/defs%3E%3Crect width='160' height='160' fill='url(%23cbp)'/%3E%3Cpath d='M160 0L0 0 0 160' fill='none' stroke='%23b0c8d4' stroke-width='1'/%3E%3C/svg%3E");
+    background-size: 160px 160px;
+}
+#gallery-contact::after {
+    content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.05) 3px, rgba(0,0,0,0.05) 4px);
+}
+#gallery-contact .section-title       { color: #ffffff !important; }
+#gallery-contact .contact-info p      { color: rgba(255,255,255,0.5) !important; }
+#gallery-contact .detail-label        { color: var(--gallery-copper) !important; }
+#gallery-contact .detail-value        { color: rgba(255,255,255,0.82) !important; }
+#gallery-contact .detail-value a      { color: rgba(255,255,255,0.82) !important; border-bottom-color: rgba(184,106,46,0.3) !important; }
+#gallery-contact .detail-value a:hover { border-bottom-color: var(--gallery-copper) !important; opacity: 1; }
+.contact-form-wrap {
+    background: rgba(255,255,255,0.04) !important;
+    border: 1px solid rgba(176,200,212,0.12) !important;
+    padding: 40px !important;
+}
+.contact-form-wrap label { color: var(--gallery-copper) !important; }
+.contact-form-wrap input,
+.contact-form-wrap textarea {
+    color: rgba(255,255,255,0.82) !important;
+    border-bottom-color: rgba(176,200,212,0.22) !important;
+}
+.contact-form-wrap input::placeholder,
+.contact-form-wrap textarea::placeholder { color: rgba(255,255,255,0.22) !important; }
 .contact-form-wrap input:focus,
-.contact-form-wrap textarea:focus { border-bottom-color: var(--gallery-copper) !important; }
+.contact-form-wrap textarea:focus        { border-bottom-color: var(--gallery-copper) !important; }
+#gallery-contact .gallery-btn       { border-color: rgba(176,200,212,0.32) !important; color: rgba(255,255,255,0.65) !important; }
+#gallery-contact .gallery-btn:hover { background: var(--gallery-copper) !important; border-color: var(--gallery-copper) !important; color: #fff !important; }
+
+/* ── FOOTER — deep dark ──────────────────────────────────────── */
+#gallery-footer {
+    background: var(--gallery-darkest) !important;
+    border-top: 1px solid rgba(184,106,46,0.35) !important;
+}
+.footer-name { color: var(--gallery-copper) !important; }
+.footer-copy {
+    color: rgba(255,255,255,0.28) !important;
+    font-family: 'Courier New', Courier, monospace !important;
+    font-size: 10px !important; letter-spacing: 0.14em;
+}
+.footer-socials a       { color: rgba(255,255,255,0.42) !important; }
+.footer-socials a:hover { color: var(--gallery-copper) !important; opacity: 1 !important; }
+
+/* ── Global ──────────────────────────────────────────────────── */
+.gallery-btn:hover {
+    background: var(--gallery-copper) !important;
+    border-color: var(--gallery-copper) !important;
+    color: var(--gallery-white) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   HERO FEATURE LAYERS — portrait, checkerboard, ASCII peel,
+   graph art, noise/glow filters
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── Portrait photo ──────────────────────────────────────────── */
+#hero-portrait-wrap {
+    position: absolute;
+    /* center-left area, shifted so lily overlaps right ~40% of face */
+    left: clamp(24px, 8vw, 120px);
+    bottom: 0;
+    width: clamp(200px, 26vw, 380px);
+    z-index: 2;
+    pointer-events: auto;
+    filter:
+        drop-shadow(-4px 0 18px rgba(14,69,53,0.55))
+        drop-shadow(0 0 60px rgba(26,58,74,0.35));
+}
+#hero-portrait-img {
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    object-position: bottom;
+    /* Subtle vignette sides — darkens edge pixels to blend with background */
+    -webkit-mask-image: linear-gradient(to right, transparent 0%, black 12%, black 100%);
+    mask-image: linear-gradient(to right, transparent 0%, black 12%, black 100%);
+    /* Noise + desaturate slightly for painting feel */
+    filter: saturate(0.88) contrast(1.04);
+    transition: filter 0.5s ease;
+}
+#hero-portrait-wrap:hover #hero-portrait-img {
+    filter: saturate(1.0) contrast(1.06);
+}
+/* Teal glow aura behind portrait */
+#hero-portrait-glow {
+    position: absolute;
+    bottom: 0; left: 10%; right: 10%;
+    height: 60%;
+    background: radial-gradient(ellipse at 50% 100%, rgba(26,58,74,0.55) 0%, transparent 70%);
+    z-index: -1;
+    pointer-events: none;
+}
+
+/* ── Checkerboard canvas (left half, blinking role-spell) ───── */
+#hero-checker-canvas {
+    position: absolute;
+    top: 0; left: 0;
+    width: 50%; height: 100%;
+    pointer-events: none;
+    z-index: 1;
+    opacity: 0.82;
+}
+
+/* ── ASCII peel canvas (full hero, mouse-driven) ─────────────── */
+#hero-ascii-canvas {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    pointer-events: none;
+    z-index: 4;
+}
+
+/* ── Parabolic / graph art SVG overlay ───────────────────────── */
+#hero-graph-svg {
+    position: absolute;
+    top: 0; left: 0;
+    width: 50%; height: 100%;
+    pointer-events: none;
+    z-index: 1;
+    overflow: visible;
+}
+.hg-curve {
+    fill: none;
+    stroke: rgba(176,200,212,0.18);
+    stroke-width: 0.8;
+}
+.hg-curve--copper {
+    stroke: rgba(184,106,46,0.22);
+}
+.hg-sine {
+    fill: none;
+    stroke: rgba(176,200,212,0.12);
+    stroke-width: 0.7;
+    stroke-dasharray: 4 3;
+}
+.hg-sine--offset {
+    stroke: rgba(184,106,46,0.10);
+}
+.hg-axis {
+    stroke: rgba(176,200,212,0.22);
+    stroke-width: 0.6;
+}
+.hg-tick {
+    stroke: rgba(184,106,46,0.35);
+    stroke-width: 0.8;
+}
+
+/* ── Noise / CRT filter SVG (injected once in <defs>) ───────── */
+#hero-noise-filter {
+    position: absolute;
+    width: 0; height: 0;
+    pointer-events: none;
+    z-index: -9999;
+    overflow: hidden;
+}
+
+/* Responsive */
+@media (max-width: 900px) {
+    #hero-portrait-wrap { width: clamp(160px, 38vw, 260px); left: 12px; }
+    #hero-checker-canvas { width: 55%; }
+    #hero-graph-svg { width: 55%; }
+}
+@media (max-width: 560px) {
+    #hero-portrait-wrap { display: none; }
+}
+
+/* ── CRT bloom on loader lily ────────────────────────────────── */
 .loader-lily svg {
     filter: drop-shadow(0 0 6px rgba(255,255,255,0.45))
             drop-shadow(0 0 22px rgba(26,58,74,0.65));
 }
+
+/* ── Scrollbar copper tint ───────────────────────────────────── */
+html::-webkit-scrollbar-thumb { background: var(--gallery-copper) !important; }
+
+/* ── Responsive ──────────────────────────────────────────────── */
 @media (max-width: 900px) {
     .hero-hud { right: 24px; bottom: 60px; }
     .hero-rings { width: 46vmin; height: 46vmin; }
-    .hero-pixel-corner { width: 60px !important; height: 50px !important; }
+    .hero-pixel-corner { width: 80px !important; height: 68px !important; }
+    .about-image-wrap::before { display: none; }
 }
 @media (pointer: coarse) { .cursor-ring { display: none; } }
 
