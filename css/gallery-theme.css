@@ -1086,6 +1086,111 @@ img {
     opacity: 1;
 }
 
+/* ============================================================ */
+/* SHAPLA DIVERGENCE — Fusion Theme Additions                   */
+/* ============================================================ */
+:root {
+    --gallery-copper:    #b86a2e;
+    --gallery-deep-teal: #1a3a4a;
+    --gallery-warm-sand: #e8e0d4;
+}
+#scroll-progress {
+    position: fixed; top: 0; left: 0; height: 2px; width: 0%;
+    background: var(--gallery-copper); z-index: 9999; pointer-events: none;
+    transition: width 0.06s linear;
+}
+.cursor-ring {
+    position: fixed; width: 28px; height: 28px;
+    border: 1.5px solid var(--gallery-copper); border-radius: 50%;
+    pointer-events: none; z-index: 99999; transform: translate(-50%, -50%);
+    opacity: 0; transition: opacity 0.4s ease, width 0.2s ease, height 0.2s ease;
+    will-change: left, top;
+}
+#hero-three-canvas {
+    position: absolute !important; top: 0 !important; left: 0 !important;
+    width: 100% !important; height: 100% !important;
+    pointer-events: none !important; z-index: 0 !important;
+}
+.hero-blueprint {
+    position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+    pointer-events: none; z-index: 0; opacity: 0.055;
+}
+.hero-rings {
+    position: absolute; right: 5%; top: 50%;
+    width: 55vmin; height: 55vmin; pointer-events: none; z-index: 0; opacity: 0.10;
+    animation: rings-slow-spin 70s linear infinite;
+}
+@keyframes rings-slow-spin {
+    from { transform: translateY(-50%) rotate(0deg);   }
+    to   { transform: translateY(-50%) rotate(360deg); }
+}
+.hero-pixel-corner { position: absolute; pointer-events: none; z-index: 0; opacity: 0.09; }
+.hero-pixel-corner--tl { top: 0; left: 0; }
+.hero-pixel-corner--br { bottom: 0; right: 0; transform: rotate(180deg); }
+.hero-hud {
+    position: absolute; bottom: 80px; right: 48px;
+    font-family: 'Courier New', Courier, monospace; font-size: 9px;
+    letter-spacing: 0.12em; color: rgba(255,255,255,0.28); pointer-events: none;
+    z-index: 3; line-height: 2; text-align: right; user-select: none;
+}
+.hero-hud span { color: var(--gallery-copper); opacity: 0.75; }
+.section-label-hud {
+    font-family: 'Courier New', Courier, monospace !important;
+    font-size: 9px !important; font-weight: 400 !important;
+    letter-spacing: 0.22em !important; text-transform: uppercase;
+    color: var(--gallery-copper) !important; display: block; margin-bottom: 20px;
+}
+.reveal { opacity: 0; transform: translateY(22px); transition: opacity 0.75s ease, transform 0.75s ease; }
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-d1 { transition-delay: 0.10s; }
+.reveal-d2 { transition-delay: 0.20s; }
+.reveal-d3 { transition-delay: 0.30s; }
+.reveal-d4 { transition-delay: 0.40s; }
+.reveal-d5 { transition-delay: 0.50s; }
+.reveal-d6 { transition-delay: 0.60s; }
+.projects-grid { perspective: 1200px; }
+.project-card { transform-style: preserve-3d; will-change: transform; }
+.project-card::after {
+    content: ''; position: absolute; inset: 0;
+    background: var(--gallery-deep-teal); opacity: 0;
+    mix-blend-mode: multiply; transition: opacity 0.35s ease, transform 0.35s ease;
+    transform: translate(0, 0); pointer-events: none; z-index: 0;
+}
+.project-card:hover::after { opacity: 0.22; transform: translate(5px, 5px); }
+.project-card-overlay { z-index: 1; }
+.gallery-btn:hover {
+    background: var(--gallery-copper) !important;
+    border-color: var(--gallery-copper) !important;
+    color: var(--gallery-white) !important;
+}
+.nav-links li a { position: relative; }
+.nav-links li a::after {
+    content: ''; position: absolute; bottom: -3px; left: 0;
+    width: 0; height: 1px; background: var(--gallery-copper); transition: width 0.3s ease;
+}
+.nav-links li a:hover::after { width: 100%; }
+.nav-links li a:hover { color: var(--gallery-copper) !important; opacity: 1; }
+.projects-summary-skills li { border-left-color: var(--gallery-copper) !important; }
+.repo-card:hover { border-color: var(--gallery-copper) !important; }
+#gallery-art-teaser { background: var(--gallery-warm-sand) !important; }
+.about-image-wrap::after {
+    content: ''; position: absolute; inset: 0; pointer-events: none; opacity: 0.045;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23g)'/%3E%3C/svg%3E");
+    background-size: 200px 200px;
+}
+.contact-form-wrap input:focus,
+.contact-form-wrap textarea:focus { border-bottom-color: var(--gallery-copper) !important; }
+.loader-lily svg {
+    filter: drop-shadow(0 0 6px rgba(255,255,255,0.45))
+            drop-shadow(0 0 22px rgba(26,58,74,0.65));
+}
+@media (max-width: 900px) {
+    .hero-hud { right: 24px; bottom: 60px; }
+    .hero-rings { width: 46vmin; height: 46vmin; }
+    .hero-pixel-corner { width: 60px !important; height: 50px !important; }
+}
+@media (pointer: coarse) { .cursor-ring { display: none; } }
+
 .contact-form-wrap {
     background: var(--gallery-white);
     padding: 48px;

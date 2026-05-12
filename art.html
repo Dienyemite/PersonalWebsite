@@ -184,6 +184,9 @@
 
 <body>
 
+<div id="scroll-progress"></div>
+<div class="cursor-ring" id="cursor-ring"></div>
+
 <!-- NAV -->
 <nav id="gallery-nav">
   <a href="index.html" class="nav-name" style="text-decoration:none;">Sadman Mazumder</a>
@@ -209,8 +212,23 @@
 
 
 <!-- ART PAGE HERO -->
-<div id="art-hero">
-  <span class="art-hero-label">Creative Work</span>
+<div id="art-hero" style="position:relative;">
+
+  <!-- Blueprint grid overlay -->
+  <svg style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;opacity:0.045;z-index:0;" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <defs>
+      <pattern id="bp-art-minor" width="40" height="40" patternUnits="userSpaceOnUse">
+        <path d="M40 0L0 0 0 40" fill="none" stroke="#b0c8d4" stroke-width="0.5"/>
+      </pattern>
+      <pattern id="bp-art-major" width="160" height="160" patternUnits="userSpaceOnUse">
+        <rect width="160" height="160" fill="url(#bp-art-minor)"/>
+        <path d="M160 0L0 0 0 160" fill="none" stroke="#b0c8d4" stroke-width="1"/>
+      </pattern>
+    </defs>
+    <rect width="100%" height="100%" fill="url(#bp-art-major)"/>
+  </svg>
+
+  <span class="art-hero-label section-label-hud" style="position:relative;z-index:1;">SM &middot; 003 / ART</span>
   <h1 class="art-hero-title">Art Gallery</h1>
   <p class="art-hero-desc">A collection of my personal artwork — illustrations, digital paintings, and creative explorations. New pieces added continuously.</p>
 </div>
@@ -219,8 +237,9 @@
 <!-- GALLERY GRID -->
 <div id="art-grid-section">
 
-  <!-- ── Digital & Colored ──────────────────────────────────────────── -->
+  <!-- ── Digital & Colored ───────────────────────────────────────────────── -->
   <div class="art-category-header">
+    <span class="section-label-hud">SM &middot; 003.1 / DIGITAL &amp; COLORED</span>
     <h2 class="art-cat-title">Digital &amp; Colored</h2>
   </div>
   <div class="art-grid art-grid--featured" id="art-grid">
@@ -333,8 +352,7 @@
   </div>
 
   <!-- ── Pixel Art ───────────────────────────────────────────────────── -->
-  <div class="art-category-header">
-    <h2 class="art-cat-title">Pixel Art</h2>
+  <div class="art-category-header">    <span class="section-label-hud">SM &middot; 003.2 / PIXEL ART</span>    <h2 class="art-cat-title">Pixel Art</h2>
   </div>
   <div class="art-grid art-grid--standard">
 
@@ -356,8 +374,7 @@
   </div>
 
   <!-- ── Traditional ─────────────────────────────────────────────────── -->
-  <div class="art-category-header">
-    <h2 class="art-cat-title">Traditional</h2>
+  <div class="art-category-header">    <span class="section-label-hud">SM &middot; 003.3 / TRADITIONAL</span>    <h2 class="art-cat-title">Traditional</h2>
   </div>
   <div class="art-grid art-grid--standard">
 
@@ -469,6 +486,40 @@
   document.addEventListener('keydown', function (e) {
     if (e.key === 'Escape') closeLightboxDirect();
   });
+
+  /* ---- Scroll progress bar ---- */
+  (function () {
+    var bar = document.getElementById('scroll-progress');
+    if (!bar) return;
+    window.addEventListener('scroll', function () {
+      var max = document.documentElement.scrollHeight - window.innerHeight;
+      bar.style.width = (max > 0 ? Math.min(100, window.scrollY / max * 100) : 0) + '%';
+    }, { passive: true });
+  })();
+
+  /* ---- Custom cursor ring ---- */
+  (function () {
+    var ring = document.getElementById('cursor-ring');
+    if (!ring || window.matchMedia('(pointer: coarse)').matches) return;
+    var cx = -100, cy = -100, tx = -100, ty = -100;
+    document.addEventListener('mousemove', function (e) { tx = e.clientX; ty = e.clientY; ring.style.opacity = '1'; });
+    (function loop() {
+      cx += (tx - cx) * 0.12; cy += (ty - cy) * 0.12;
+      ring.style.left = cx + 'px'; ring.style.top = cy + 'px';
+      requestAnimationFrame(loop);
+    })();
+  })();
+
+  /* ---- Scroll-triggered reveal ---- */
+  (function () {
+    var targets = document.querySelectorAll('.art-item, .art-category-header, #art-hero > *');
+    if (!('IntersectionObserver' in window)) { targets.forEach(function(el){el.classList.add('reveal','visible');}); return; }
+    targets.forEach(function(el){ el.classList.add('reveal'); });
+    var obs = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) { if (entry.isIntersecting) { entry.target.classList.add('visible'); obs.unobserve(entry.target); } });
+    }, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
+    targets.forEach(function (el) { obs.observe(el); });
+  })();
 
 })();
 </script>

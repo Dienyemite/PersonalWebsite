@@ -16,9 +16,15 @@
 
 <!-- Theme -->
 <link rel="stylesheet" href="css/gallery-theme.css" />
+
+<!-- Three.js -->
+<script src="https://cdn.jsdelivr.net/npm/three@0.163.0/build/three.min.js"></script>
 </head>
 
 <body>
+
+<div id="scroll-progress"></div>
+<div class="cursor-ring" id="cursor-ring"></div>
 
 <!-- ============================================================ -->
 <!-- LOADING SCREEN                                              -->
@@ -170,6 +176,56 @@
     <!-- Lily pad — left background (CSS gradient, no img) -->
     <div class="hero-lilypad"></div>
 
+    <!-- Blueprint grid overlay -->
+    <svg class="hero-blueprint" xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" aria-hidden="true">
+      <defs>
+        <pattern id="bp-minor" width="40" height="40" patternUnits="userSpaceOnUse">
+          <path d="M40 0L0 0 0 40" fill="none" stroke="#b0c8d4" stroke-width="0.5"/>
+        </pattern>
+        <pattern id="bp-major" width="160" height="160" patternUnits="userSpaceOnUse">
+          <rect width="160" height="160" fill="url(#bp-minor)"/>
+          <path d="M160 0L0 0 0 160" fill="none" stroke="#b0c8d4" stroke-width="1"/>
+        </pattern>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#bp-major)"/>
+      <line x1="50%" y1="40%" x2="50%" y2="60%" stroke="#b86a2e" stroke-width="0.8" opacity="0.6"/>
+      <line x1="44%" y1="50%" x2="56%" y2="50%" stroke="#b86a2e" stroke-width="0.8" opacity="0.6"/>
+    </svg>
+
+    <!-- Concentric radar rings -->
+    <svg class="hero-rings" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <circle cx="100" cy="100" r="18"  fill="none" stroke="#b0c8d4" stroke-width="0.8"/>
+      <circle cx="100" cy="100" r="36"  fill="none" stroke="#b0c8d4" stroke-width="0.8"/>
+      <circle cx="100" cy="100" r="56"  fill="none" stroke="#b0c8d4" stroke-width="0.6"/>
+      <circle cx="100" cy="100" r="76"  fill="none" stroke="#b0c8d4" stroke-width="0.5"/>
+      <circle cx="100" cy="100" r="96"  fill="none" stroke="#b0c8d4" stroke-width="0.4"/>
+      <line x1="100" y1="4"   x2="100" y2="16"  stroke="#b86a2e" stroke-width="0.8"/>
+      <line x1="196" y1="100" x2="184" y2="100" stroke="#b86a2e" stroke-width="0.8"/>
+      <line x1="100" y1="196" x2="100" y2="184" stroke="#b86a2e" stroke-width="0.8"/>
+      <line x1="4"   y1="100" x2="16"  y2="100" stroke="#b86a2e" stroke-width="0.8"/>
+    </svg>
+
+    <!-- Pixel corner accents -->
+    <svg class="hero-pixel-corner hero-pixel-corner--tl" width="96" height="80" viewBox="0 0 96 80" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect x="0"  y="0"  width="8" height="8" fill="#1a3a4a"/>
+      <rect x="16" y="0"  width="8" height="8" fill="#b86a2e"/>
+      <rect x="8"  y="8"  width="8" height="8" fill="#1a3a4a"/>
+      <rect x="0"  y="16" width="8" height="8" fill="#b86a2e"/>
+      <rect x="24" y="8"  width="8" height="8" fill="#1a3a4a"/>
+      <rect x="16" y="16" width="8" height="8" fill="#1a3a4a"/>
+    </svg>
+    <svg class="hero-pixel-corner hero-pixel-corner--br" width="96" height="80" viewBox="0 0 96 80" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <rect x="0"  y="0"  width="8" height="8" fill="#1a3a4a"/>
+      <rect x="16" y="0"  width="8" height="8" fill="#b86a2e"/>
+      <rect x="8"  y="8"  width="8" height="8" fill="#1a3a4a"/>
+      <rect x="0"  y="16" width="8" height="8" fill="#b86a2e"/>
+      <rect x="24" y="8"  width="8" height="8" fill="#1a3a4a"/>
+      <rect x="16" y="16" width="8" height="8" fill="#1a3a4a"/>
+    </svg>
+
+    <!-- HUD coordinate readout -->
+    <div class="hero-hud" aria-hidden="true">x: 0.000<br>y: 0.000<br><span>SM_IDX &bull; 001</span></div>
+
     <!-- Name top-left -->
     <div class="hero-text">
       <h1 class="hero-name">Sadman<br>Mazumder</h1>
@@ -192,12 +248,12 @@
   <section id="gallery-about">
     <div class="about-grid">
 
-      <div class="about-image-wrap">
+      <div class="about-image-wrap reveal">
         <img src="img/about/Sadman1.jpg" alt="Sadman Mazumder" />
       </div>
 
-      <div class="about-content">
-        <span class="section-label">About</span>
+      <div class="about-content reveal reveal-d2">
+        <span class="section-label section-label-hud">SM &middot; 001 / ABOUT</span>
         <h2 class="section-title">Sadman Mazumder</h2>
         <span class="about-role">Developer &amp; Artist | New Jersey Institute of Technology</span>
 
@@ -224,9 +280,9 @@
   <!-- PROJECTS                                                   -->
   <!-- ========================================================== -->
   <section id="gallery-projects">
-    <div class="projects-header">
+    <div class="projects-header reveal">
       <div>
-        <span class="section-label">Work</span>
+        <span class="section-label section-label-hud">SM &middot; 002 / WORK</span>
         <h2 class="section-title" style="margin-bottom:0">Projects</h2>
       </div>
       <a href="https://github.com/Dienyemite" target="_blank" rel="noopener" class="gallery-btn gallery-btn-ghost">
@@ -252,7 +308,7 @@
     <div class="projects-grid">
 
       <!-- Project 1 -->
-      <div class="project-card">
+      <div class="project-card reveal reveal-d1">
         <img class="project-card-img" src="img/portfolio/ActionEngineClip.gif" alt="Project" />
         <div class="project-card-overlay">
           <span class="project-card-tag">Game Development</span>
@@ -261,7 +317,7 @@
       </div>
 
       <!-- Project 2 -->
-      <div class="project-card">
+      <div class="project-card reveal reveal-d2">
         <img class="project-card-img" src="img/portfolio/PizzaWebsiteClip.gif" alt="Project" />
         <div class="project-card-overlay">
           <span class="project-card-tag">Web Development</span>
@@ -270,7 +326,7 @@
       </div>
 
       <!-- Project 3 -->
-      <div class="project-card">
+      <div class="project-card reveal reveal-d3">
         <img class="project-card-img" src="img/portfolio/SavantClip.gif" alt="Project" />
         <div class="project-card-overlay">
           <span class="project-card-tag">Education Technology</span>
@@ -279,7 +335,7 @@
       </div>
 
       <!-- Project 4 -->
-      <div class="project-card">
+      <div class="project-card reveal reveal-d4">
         <img class="project-card-img" src="img/portfolio/Quake4ACModClip.gif" alt="Project" />
         <div class="project-card-overlay">
           <span class="project-card-tag">Software Modding</span>
@@ -288,7 +344,7 @@
       </div>
 
       <!-- Project 5 -->
-      <div class="project-card">
+      <div class="project-card reveal reveal-d5">
         <img class="project-card-img" src="img/portfolio/DockerDrupal.png" alt="Project" />
         <div class="project-card-overlay">
           <span class="project-card-tag">Content Management System</span>
@@ -297,7 +353,7 @@
       </div>
 
       <!-- Project 6 — Coming soon placeholder -->
-      <div class="project-card">
+      <div class="project-card reveal reveal-d6">
         <img class="project-card-img" src="img/portfolio/SystemIntegration.png" alt="Project" />
         <div class="project-card-overlay">
           <span class="project-card-tag">Full Stack Development</span>
@@ -310,7 +366,7 @@
     <!-- GitHub Repositories Carousel -->
     <div class="repos-carousel-wrap">
       <div class="repos-carousel-label">
-        <span class="section-label">GitHub</span>
+        <span class="section-label section-label-hud">SM &middot; 002 / GITHUB</span>
         <a href="https://github.com/Dienyemite?tab=repositories" target="_blank" rel="noopener" class="repos-all-link">View all &rarr;</a>
       </div>
       <div class="repos-track-outer">
@@ -330,16 +386,16 @@
   <section id="gallery-art-teaser">
     <div class="art-teaser-inner">
 
-      <div class="art-teaser-text">
-        <span class="section-label">Creative Work</span>
+      <div class="art-teaser-text reveal">
+        <span class="section-label section-label-hud">SM &middot; 003 / ART</span>
         <h2 class="section-title">Art Gallery</h2>
         <p>A collection of my personal artworks. New pieces added regularly.</p>
         <a href="art.html" class="gallery-btn">Enter Gallery</a>
       </div>
 
-      <div class="art-teaser-visual">
+      <div class="art-teaser-visual reveal reveal-d2">
         <div class="art-teaser-tile">
-          <img src="img/art/A2.png" alt="A2" />
+          <img src="img/art/InnaCloseup.png" alt="Inna Closeup" />
         </div>
       </div>
 
@@ -354,8 +410,8 @@
   <section id="gallery-contact">
     <div class="contact-inner">
 
-      <div class="contact-info">
-        <span class="section-label">Get in Touch</span>
+      <div class="contact-info reveal">
+        <span class="section-label section-label-hud">SM &middot; 004 / CONTACT</span>
         <h2 class="section-title">Contact</h2>
         <p>Interested in working together, have a question, or just want to say hello? I'd love to hear from you.</p>
 
@@ -377,7 +433,7 @@
         </ul>
       </div>
 
-      <div class="contact-form-wrap">
+      <div class="contact-form-wrap reveal reveal-d2">
         <form id="gallery-contact-form" autocomplete="off" novalidate>
           <div class="form-group">
             <label for="cf-name">Name</label>
@@ -601,6 +657,118 @@
       form.reset();
     });
   }
+
+  /* ---- Scroll progress bar ---- */
+  (function () {
+    var bar = document.getElementById('scroll-progress');
+    if (!bar) return;
+    window.addEventListener('scroll', function () {
+      var max = document.documentElement.scrollHeight - window.innerHeight;
+      bar.style.width = (max > 0 ? Math.min(100, window.scrollY / max * 100) : 0) + '%';
+    }, { passive: true });
+  })();
+
+  /* ---- Custom cursor ring ---- */
+  (function () {
+    var ring = document.getElementById('cursor-ring');
+    if (!ring || window.matchMedia('(pointer: coarse)').matches) return;
+    var cx = -100, cy = -100, tx = -100, ty = -100;
+    document.addEventListener('mousemove', function (e) { tx = e.clientX; ty = e.clientY; ring.style.opacity = '1'; });
+    (function loop() {
+      cx += (tx - cx) * 0.12; cy += (ty - cy) * 0.12;
+      ring.style.left = cx + 'px'; ring.style.top = cy + 'px';
+      requestAnimationFrame(loop);
+    })();
+  })();
+
+  /* ---- HUD coordinate readout ---- */
+  (function () {
+    var hud = document.querySelector('.hero-hud');
+    if (!hud) return;
+    document.addEventListener('mousemove', function (e) {
+      var nx = ((e.clientX / window.innerWidth) * 2 - 1).toFixed(3);
+      var ny = ((1 - e.clientY / window.innerHeight) * 2 - 1).toFixed(3);
+      hud.innerHTML = 'x: ' + nx + '<br>y: ' + ny + '<br><span>SM_IDX &bull; 001</span>';
+    });
+  })();
+
+  /* ---- Scroll-triggered reveal ---- */
+  (function () {
+    var els = document.querySelectorAll('.reveal');
+    if (!('IntersectionObserver' in window)) { els.forEach(function(el){el.classList.add('visible');}); return; }
+    var obs = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) { if (entry.isIntersecting) { entry.target.classList.add('visible'); obs.unobserve(entry.target); } });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+    els.forEach(function (el) { obs.observe(el); });
+  })();
+
+  /* ---- 3D card tilt on hover ---- */
+  (function () {
+    document.querySelectorAll('.project-card').forEach(function (card) {
+      card.addEventListener('mousemove', function (e) {
+        var r = card.getBoundingClientRect();
+        var x = (e.clientX - r.left) / r.width - 0.5;
+        var y = (e.clientY - r.top) / r.height - 0.5;
+        card.style.transform = 'perspective(800px) rotateY(' + (x*10) + 'deg) rotateX(' + (-y*10) + 'deg) scale(1.02)';
+      });
+      card.addEventListener('mouseleave', function () { card.style.transform = ''; });
+    });
+  })();
+
+  /* ---- Three.js: Blueprint Wireframe Fragments ---- */
+  (function () {
+    if (typeof THREE === 'undefined') return;
+    var hero = document.getElementById('gallery-hero');
+    if (!hero) return;
+    var W = hero.offsetWidth, H = hero.offsetHeight;
+    var scene = new THREE.Scene();
+    var camera = new THREE.PerspectiveCamera(55, W / H, 0.1, 100);
+    camera.position.set(0, 0, 6);
+    var renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+    renderer.setSize(W, H);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setClearColor(0x000000, 0);
+    var cvs = renderer.domElement;
+    cvs.id = 'hero-three-canvas';
+    cvs.setAttribute('aria-hidden', 'true');
+    hero.insertBefore(cvs, hero.firstChild);
+    var teal = new THREE.Color(0x1a3a4a);
+    var copper = new THREE.Color(0xb86a2e);
+    var defs = [
+      { g: new THREE.IcosahedronGeometry(0.42,0), c: teal,   o: 0.14 },
+      { g: new THREE.OctahedronGeometry(0.38,0),  c: teal,   o: 0.12 },
+      { g: new THREE.BoxGeometry(0.52,0.52,0.52), c: copper, o: 0.10 },
+      { g: new THREE.TetrahedronGeometry(0.48,0), c: teal,   o: 0.13 },
+      { g: new THREE.IcosahedronGeometry(0.28,0), c: copper, o: 0.09 },
+      { g: new THREE.OctahedronGeometry(0.55,0),  c: teal,   o: 0.11 },
+      { g: new THREE.BoxGeometry(0.32,0.64,0.32), c: teal,   o: 0.10 },
+      { g: new THREE.TetrahedronGeometry(0.34,0), c: copper, o: 0.08 },
+      { g: new THREE.IcosahedronGeometry(0.36,0), c: teal,   o: 0.12 },
+      { g: new THREE.OctahedronGeometry(0.22,0),  c: copper, o: 0.09 },
+    ];
+    var rnd = Math.random;
+    var frags = defs.map(function (d) {
+      var seg = new THREE.LineSegments(new THREE.WireframeGeometry(d.g), new THREE.LineBasicMaterial({ color: d.c, opacity: d.o, transparent: true }));
+      seg.position.set((rnd()-0.3)*9, (rnd()-0.5)*5.5, (rnd()-0.7)*5);
+      seg.rotation.set(rnd()*Math.PI*2, rnd()*Math.PI*2, rnd()*Math.PI*2);
+      scene.add(seg);
+      return { m: seg, rx: (rnd()-0.5)*0.004, ry: (rnd()-0.5)*0.004, rz: (rnd()-0.5)*0.002 };
+    });
+    var mx = 0, my = 0;
+    document.addEventListener('mousemove', function (e) { mx=(e.clientX/window.innerWidth-0.5)*2; my=(e.clientY/window.innerHeight-0.5)*2; });
+    var heroVisible = true;
+    new IntersectionObserver(function(en){ heroVisible=en[0].isIntersecting; }).observe(hero);
+    window.addEventListener('resize', function () { W=hero.offsetWidth; H=hero.offsetHeight; camera.aspect=W/H; camera.updateProjectionMatrix(); renderer.setSize(W,H); });
+    (function loop() {
+      requestAnimationFrame(loop);
+      if (!heroVisible) return;
+      frags.forEach(function(f){ f.m.rotation.x+=f.rx; f.m.rotation.y+=f.ry; f.m.rotation.z+=f.rz; });
+      camera.position.x += (mx*0.6 - camera.position.x)*0.025;
+      camera.position.y += (-my*0.4 - camera.position.y)*0.025;
+      camera.lookAt(0,0,0);
+      renderer.render(scene,camera);
+    })();
+  })();
 
 })();
 </script>
