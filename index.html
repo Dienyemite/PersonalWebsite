@@ -747,13 +747,13 @@
 
   /* ---- Three.js: Blueprint Wireframe Fragments ---- */
   /* ================================================================
-     HERO FEATURE 1 — CHECKERBOARD ROLE-SPELL (left half, yellow glow)
+     HERO FEATURE 1 — CHECKERBOARD ROLE-SPELL (full hero, yellow glow)
      ================================================================ */
   (function () {
     var cvs = document.getElementById('hero-checker-canvas');
     if (!cvs) return;
     var ctx = cvs.getContext('2d');
-    var CELL = 22, GAP = 2, STEP = 24;
+    var STEP = 20; // recomputed on resize
 
     var FONT5X7 = {
       'A':[[0,1,1,1,0],[1,0,0,0,1],[1,0,0,0,1],[1,1,1,1,1],[1,0,0,0,1],[1,0,0,0,1],[1,0,0,0,1]],
@@ -774,13 +774,31 @@
       'T':[[1,1,1,1,1],[0,0,1,0,0],[0,0,1,0,0],[0,0,1,0,0],[0,0,1,0,0],[0,0,1,0,0],[0,0,1,0,0]],
       'V':[[1,0,0,0,1],[1,0,0,0,1],[1,0,0,0,1],[1,0,0,0,1],[1,0,0,0,1],[0,1,0,1,0],[0,0,1,0,0]],
       'W':[[1,0,0,0,1],[1,0,0,0,1],[1,0,0,0,1],[1,0,1,0,1],[1,0,1,0,1],[1,1,0,1,1],[1,0,0,0,1]],
+      '/':[[0,0,0,0,1],[0,0,0,1,0],[0,0,0,1,0],[0,0,1,0,0],[0,0,1,0,0],[0,1,0,0,0],[0,1,0,0,0]],
       ' ':[[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0],[0,0,0,0,0]],
     };
 
-    var SEQUENCES = [['SOFTWARE','DEVELOPER'],['AI','ENGINEER'],['GAME','DEVELOPER']];
-    var phase = 0, subPhase = 0, phaseTimer = 0;
-    var PHASE_HOLD = 200, PHASE_TRANS = 50;
+    // Each entry: [line1, line2] — both lines shown simultaneously
+    var SEQUENCES = [
+      ['SOFTWARE',  'DEVELOPER'],
+      ['AI/ML',     'ENGINEER'],
+      ['GAME',      'DEVELOPER']
+    ];
+    var phase = 0, phaseTimer = 0;
+    var PHASE_HOLD = 260, PHASE_FADE = 60;
     var cols, rows, cellStates, targetStates, noiseLevels;
+
+    // Compute STEP so the longest word in any sequence fits the canvas width
+    function computeStep() {
+      var maxLen = 0;
+      SEQUENCES.forEach(function(seq) {
+        seq.forEach(function(w) { if (w.length > maxLen) maxLen = w.length; });
+      });
+      // Each char = 5 bit-cols + 1 gap = 6 cell-columns; 8 margin cols total
+      var needed = maxLen * 6 + 8;
+      var s = Math.floor(cvs.offsetWidth * 0.90 / needed);
+      return Math.max(5, Math.min(28, s));
+    }
 
     function wordToCells(word, rowOffset, colOffset) {
       var cells = [], col = colOffset;
@@ -797,12 +815,23 @@
     function buildTarget() {
       targetStates.fill(0);
       var seq = SEQUENCES[phase % SEQUENCES.length];
-      var word = seq[subPhase % seq.length];
-      var startRow = Math.max(1, Math.floor((rows - 7) / 2));
-      var startCol = 2;
-      wordToCells(word, startRow, startCol).forEach(function (cell) {
-        var idx = cell.r * cols + cell.c;
-        if (idx >= 0 && idx < targetStates.length) targetStates[idx] = 1.0;
+      var line1 = seq[0], line2 = seq[1];
+
+      // Horizontally center each line independently
+      var startCol1 = Math.max(0, Math.floor((cols - line1.length * 6) / 2));
+      var startCol2 = Math.max(0, Math.floor((cols - line2.length * 6) / 2));
+
+      // Two 7-row blocks with 2-row gap = 16 rows total, centered vertically
+      var totalRows = 16;
+      var startRow1 = Math.max(1, Math.floor((rows - totalRows) / 2));
+      var startRow2 = startRow1 + 9; // 7 rows + 2 gap
+
+      [wordToCells(line1, startRow1, startCol1),
+       wordToCells(line2, startRow2, startCol2)].forEach(function(cells) {
+        cells.forEach(function(cell) {
+          var idx = cell.r * cols + cell.c;
+          if (idx >= 0 && idx < targetStates.length) targetStates[idx] = 1.0;
+        });
       });
     }
 
@@ -810,75 +839,86 @@
       cvs.width  = cvs.offsetWidth  * (window.devicePixelRatio || 1);
       cvs.height = cvs.offsetHeight * (window.devicePixelRatio || 1);
       ctx.scale(window.devicePixelRatio || 1, window.devicePixelRatio || 1);
-      cols = Math.floor(cvs.offsetWidth  / STEP) + 1;
-      rows = Math.floor(cvs.offsetHeight / STEP) + 1;
-      cellStates   = new Float32Array(cols * rows);
-      targetStates = new Float32Array(cols * rows);
-      noiseLevels  = new Float32Array(cols * rows);
-      for (var i = 0; i < noiseLevels.length; i++) noiseLevels[i] = Math.random() * 0.08;
+      STEP = computeStep();
+      cols = Math.ceil(cvs.offsetWidth  / STEP) + 1;
+      rows = Math.ceil(cvs.offsetHeight / STEP) + 1;
+      var len = cols * rows;
+      cellStates   = new Float32Array(len);
+      targetStates = new Float32Array(len);
+      noiseLevels  = new Float32Array(len);
+      for (var i = 0; i < len; i++) noiseLevels[i] = Math.random() * 0.07;
       buildTarget();
     }
 
     function tick() {
       phaseTimer++;
-      if (phaseTimer > PHASE_HOLD + PHASE_TRANS) {
+      if (phaseTimer > PHASE_HOLD + PHASE_FADE) {
         phaseTimer = 0;
-        var seq = SEQUENCES[phase % SEQUENCES.length];
-        subPhase++;
-        if (subPhase >= seq.length) { subPhase = 0; phase++; }
+        phase++;
         buildTarget();
       }
       var now = Date.now();
       for (var i = 0; i < cellStates.length; i++) {
         if (targetStates[i] === 0) {
-          if (Math.random() < 0.004) noiseLevels[i] = 0.05 + Math.random() * 0.22;
-          else noiseLevels[i] *= 0.90;
+          if (Math.random() < 0.003) noiseLevels[i] = 0.04 + Math.random() * 0.18;
+          else noiseLevels[i] *= 0.92;
           cellStates[i] = noiseLevels[i];
         } else {
-          cellStates[i] += (1.0 - cellStates[i]) * 0.14;
-          var pulse = 0.72 + 0.28 * (0.5 + 0.5 * Math.sin(now * 0.004 + i * 0.37));
-          cellStates[i] = Math.max(0.6, cellStates[i]) * pulse;
+          cellStates[i] += (1.0 - cellStates[i]) * 0.12;
+          var pulse = 0.75 + 0.25 * (0.5 + 0.5 * Math.sin(now * 0.0035 + i * 0.41));
+          cellStates[i] = Math.max(0.55, cellStates[i]) * pulse;
         }
       }
     }
 
     function draw() {
-      ctx.clearRect(0, 0, cvs.offsetWidth, cvs.offsetHeight);
+      var W = cvs.offsetWidth, H = cvs.offsetHeight;
+      ctx.clearRect(0, 0, W, H);
+      // Subtle background grid
+      ctx.strokeStyle = 'rgba(176,200,212,0.06)';
+      ctx.lineWidth = 0.5;
+      for (var gc = 0; gc <= cols; gc++) {
+        ctx.beginPath(); ctx.moveTo(gc * STEP, 0); ctx.lineTo(gc * STEP, H); ctx.stroke();
+      }
+      for (var gr = 0; gr <= rows; gr++) {
+        ctx.beginPath(); ctx.moveTo(0, gr * STEP); ctx.lineTo(W, gr * STEP); ctx.stroke();
+      }
       var now = Date.now();
       for (var r = 0; r < rows; r++) {
         for (var c = 0; c < cols; c++) {
           var val = cellStates[r * cols + c];
-          if (val < 0.015) continue;
+          if (val < 0.012) continue;
           var x = c * STEP, y = r * STEP;
-          // Outline
+          var cell = STEP - 2;
+          // Outline square
           ctx.save();
-          ctx.globalAlpha = val * 0.5;
-          ctx.strokeStyle = 'rgba(240,210,50,' + (0.4 + val * 0.6) + ')';
+          ctx.globalAlpha = val * 0.55;
+          ctx.strokeStyle = 'rgba(240,210,50,' + (0.35 + val * 0.65) + ')';
           ctx.lineWidth = 0.9;
-          ctx.strokeRect(x + 1, y + 1, CELL - 2, CELL - 2);
+          ctx.strokeRect(x + 1, y + 1, cell, cell);
           ctx.restore();
-          // Fill glow
-          if (val > 0.25) {
+          // Inner glow fill
+          if (val > 0.22) {
             ctx.save();
-            ctx.globalAlpha = (val - 0.25) * 1.2;
-            var grd = ctx.createRadialGradient(x+CELL/2,y+CELL/2,0,x+CELL/2,y+CELL/2,CELL*0.75);
-            grd.addColorStop(0, 'rgba(255,248,90,0.88)');
-            grd.addColorStop(0.5,'rgba(230,200,50,0.38)');
+            ctx.globalAlpha = (val - 0.22) * 1.1;
+            var grd = ctx.createRadialGradient(x+STEP/2,y+STEP/2,0,x+STEP/2,y+STEP/2,STEP*0.7);
+            grd.addColorStop(0, 'rgba(255,248,90,0.92)');
+            grd.addColorStop(0.5,'rgba(230,200,50,0.42)');
             grd.addColorStop(1,  'rgba(180,140,0,0)');
             ctx.fillStyle = grd;
-            ctx.fillRect(x+2,y+2,CELL-4,CELL-4);
+            ctx.fillRect(x+2, y+2, cell-2, cell-2);
             ctx.restore();
           }
-          // Bloom halo
-          if (val > 0.6) {
+          // Bloom halo on bright cells
+          if (val > 0.58) {
             ctx.save();
-            ctx.globalAlpha = (val - 0.6) * 0.55;
-            var bloom = ctx.createRadialGradient(x+CELL/2,y+CELL/2,0,x+CELL/2,y+CELL/2,CELL*1.5);
-            bloom.addColorStop(0,'rgba(255,255,140,0.55)');
+            ctx.globalAlpha = (val - 0.58) * 0.5;
+            var bloom = ctx.createRadialGradient(x+STEP/2,y+STEP/2,0,x+STEP/2,y+STEP/2,STEP*1.4);
+            bloom.addColorStop(0,'rgba(255,255,140,0.5)');
             bloom.addColorStop(1,'rgba(255,220,0,0)');
             ctx.fillStyle = bloom;
             ctx.beginPath();
-            ctx.arc(x+CELL/2,y+CELL/2,CELL*1.2,0,Math.PI*2);
+            ctx.arc(x+STEP/2,y+STEP/2,STEP*1.15,0,Math.PI*2);
             ctx.fill();
             ctx.restore();
           }
@@ -888,7 +928,7 @@
 
     function loop() { requestAnimationFrame(loop); tick(); draw(); }
     resize();
-    window.addEventListener('resize', function() { resize(); });
+    window.addEventListener('resize', function () { resize(); });
     loop();
   })();
 

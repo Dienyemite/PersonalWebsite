@@ -1475,14 +1475,14 @@ img {
     pointer-events: none;
 }
 
-/* ── Checkerboard canvas (left half, blinking role-spell) ───── */
+/* ── Checkerboard canvas (full hero, blinking role-spell) ───── */
 #hero-checker-canvas {
     position: absolute;
     top: 0; left: 0;
-    width: 50%; height: 100%;
+    width: 100%; height: 100%;
     pointer-events: none;
     z-index: 1;
-    opacity: 0.82;
+    opacity: 0.88;
 }
 
 /* ── ASCII peel canvas (full hero, mouse-driven) ─────────────── */
@@ -1541,7 +1541,6 @@ img {
 /* Responsive */
 @media (max-width: 900px) {
     #hero-portrait-wrap { width: clamp(160px, 38vw, 260px); left: 12px; }
-    #hero-checker-canvas { width: 55%; }
     #hero-graph-svg { width: 55%; }
 }
 @media (max-width: 560px) {
